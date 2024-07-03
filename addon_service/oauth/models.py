@@ -40,7 +40,7 @@ class OAuth2ClientConfig(AddonsServiceBaseModel):
 
     @property
     def client_secret(self):
-        return settings.OAUTH_SECRETS[self.client_id]
+        return settings.OAUTH_SECRETS.get(self.client_id)
 
     __str__ = __repr__
 
