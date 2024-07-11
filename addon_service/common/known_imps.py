@@ -5,7 +5,10 @@ import and add new implementations here to make them available in the api
 
 import enum
 
-from addon_imps.storage import box_dot_com
+from addon_imps.storage import (
+    box_dot_com,
+    s3,
+)
 from addon_service.common.enum_decorators import enum_names_same_as
 from addon_toolkit import AddonImp
 
@@ -54,6 +57,7 @@ class KnownAddonImps(enum.Enum):
     """Static mapping from API-facing name for an AddonImp to the Imp itself"""
 
     BOX_DOT_COM = box_dot_com.BoxDotComStorageImp
+    S3 = s3.S3StorageImp
 
     if __debug__:
         BLARG = my_blarg.MyBlargStorage
@@ -65,6 +69,7 @@ class AddonImpNumbers(enum.Enum):
     """Static mapping from each AddonImp name to a unique integer (for database use)"""
 
     BOX_DOT_COM = 1001
+    S3 = 1002
 
     if __debug__:
         BLARG = -7

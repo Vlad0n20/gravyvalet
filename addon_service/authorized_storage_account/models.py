@@ -201,6 +201,13 @@ class AuthorizedStorageAccount(AddonsServiceBaseModel):
         )
         self.save()
 
+    def validate_access_key_secret_key(self, crendentials: ExternalCredentials):
+        if self.credentials_format is not CredentialsFormats.ACCESS_KEY_SECRET_KEY:
+            raise ValueError(
+                "Cannot validate access key and secret key for non-access-key crendentials"
+            )
+        self.imp_cls.validate_access_key_secret_key(crendentials)
+
     def storage_imp_config(self) -> StorageConfig:
         return StorageConfig(
             max_upload_mb=self.external_service.max_upload_mb,
