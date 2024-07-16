@@ -150,4 +150,20 @@ class StorageAddonImp(AddonImp):
     ADDON_INTERFACE = StorageAddonInterface
 
     config: StorageConfig
+
+
+@dataclasses.dataclass(frozen=True)
+class HttpRequestorImp:
+    """base class for storage addon implementations using GV network"""
+
     network: HttpRequestor
+
+
+@dataclasses.dataclass(frozen=True)
+class ClientRequestorImp:
+    """base class for storage addon with custom clients"""
+
+    client: typing.Any
+
+    def construct_client(self, account):
+        pass

@@ -84,6 +84,10 @@ class AddonImp:
         """to be implemented by addons which require an external account id"""
         return ""
 
+    @classmethod
+    def validate_credentials(cls, crendentials):
+        pass
+
     ###
     # instance methods
 

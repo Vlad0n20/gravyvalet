@@ -95,15 +95,11 @@ class AuthorizedStorageAccountSerializer(serializers.HyperlinkedModelSerializer)
             authorized_account.initiate_oauth2_flow(
                 validated_data.get("authorized_scopes")
             )
-        if (
-            external_service.credentials_format
-            is CredentialsFormats.ACCESS_KEY_SECRET_KEY
-        ):
-            authorized_account.validate_access_key_secret_key(
-                validated_data["credentials"]
-            )
         else:
             authorized_account.credentials = validated_data["credentials"]
+            authorized_account.imp_cls.validate_credentials(
+                authorized_account.credentials
+            )
         try:
             authorized_account.save()
         except ModelValidationError as e:
