@@ -5,6 +5,7 @@ import and add new implementations here to make them available in the api
 
 import enum
 
+from addon_imps.citations import zotero_org
 from addon_imps.storage import (
     box_dot_com,
     s3,
@@ -58,6 +59,7 @@ class KnownAddonImps(enum.Enum):
 
     BOX_DOT_COM = box_dot_com.BoxDotComStorageImp
     S3 = s3.S3StorageImp
+    ZOTERO_ORG = zotero_org.ZoteroOrgCitationImp
 
     if __debug__:
         BLARG = my_blarg.MyBlargStorage
@@ -69,7 +71,8 @@ class AddonImpNumbers(enum.Enum):
     """Static mapping from each AddonImp name to a unique integer (for database use)"""
 
     BOX_DOT_COM = 1001
-    S3 = 1002
+    ZOTERO_ORG = 1002
+    S3 = 1003
 
     if __debug__:
         BLARG = -7
