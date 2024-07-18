@@ -5,6 +5,7 @@ from addon_service.common.network import GravyvaletHttpRequestor
 from addon_service.models import AuthorizedStorageAccount
 from addon_toolkit.interfaces.storage import (
     ClientRequestorImp,
+    HttpRequestorImp,
     StorageAddonImp,
     StorageConfig,
 )
@@ -16,14 +17,17 @@ async def get_storage_addon_instance(
     config: StorageConfig,
 ) -> StorageAddonImp:
     assert issubclass(imp_cls, StorageAddonImp)
-    imp = imp_cls(
-        config=config,
-        network=GravyvaletHttpRequestor(
-            client_session=await get_singleton_client_session(),
-            prefix_url=config.external_api_url,
-            account=account,
-        ),
-    )
+    if issubclass(imp_cls, HttpRequestorImp):
+        imp = imp_cls(
+            config=config,
+            network=GravyvaletHttpRequestor(
+                client_session=await get_singleton_client_session(),
+                prefix_url=config.external_api_url,
+                account=account,
+            ),
+        )
+    else:
+        imp = imp_cls(config=config)
     if isinstance(imp, ClientRequestorImp):
         imp.construct_client(account)
 

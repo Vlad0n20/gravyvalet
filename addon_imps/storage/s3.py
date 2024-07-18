@@ -3,12 +3,15 @@
 # import typing
 
 import boto3
-
-from addon_service.authorized_storage_account.models import AuthorizedStorageAccount
-from addon_service.credentials.models import ExternalCredentials
+from botocore import exceptions
+from django.core.exceptions import ValidationError
 
 # from addon_toolkit.cursor import OffsetCursor
 from addon_toolkit.interfaces import storage
+
+
+# from addon_service.authorized_storage_account.models import AuthorizedStorageAccount
+# from addon_service.credentials.models import ExternalCredentials
 
 
 class Boto3Client:
@@ -23,18 +26,18 @@ class S3StorageImp(storage.StorageAddonImp, S3ClientImp):
     """storage on Amazon S3"""
 
     @classmethod
-    def validate_credentials(cls, credentials: ExternalCredentials):
-        access_key = credentials.decrypted_credentials.access_key
-        secret_key = credentials.decrypted_credentials.secret_key
+    def validate_credentials(cls, credentials):
+        access_key = credentials.access_key
+        secret_key = credentials.secret_key
         s3 = boto3.client(
             "s3", aws_access_key_id=access_key, aws_secret_access_key=secret_key
         )
-        response = s3.list_buckets()
-        if response:
-            return True
-        return False
+        try:
+            s3.list_buckets()
+        except exceptions.ClientError:
+            raise ValidationError("Fail to validate access key and secret key")
 
-    def construct_client(self, account: AuthorizedStorageAccount):
+    def construct_client(self, account):
         access_key = account._credentials.decrypted_credentials.access_key
         secret_key = account._credentials.decrypted_credentials.secret_key
         self.client = boto3.client(

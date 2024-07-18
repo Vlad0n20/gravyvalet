@@ -159,7 +159,7 @@ class HttpRequestorImp:
     network: HttpRequestor
 
 
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass()
 class ClientRequestorImp:
     """base class for storage addon with custom clients"""
 
