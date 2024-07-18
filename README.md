@@ -7,7 +7,7 @@ Welcome to the Open Science Framework's base server for addon integration with o
 ## Setting up GravyValet Locally
 
 1. Start your PostgreSQL and Django containers with `docker compose up -d`.
-2. Enter the Django container: `docker compose exec addon_service /bin/bash`.
+2. Enter the Django container: `docker compose exec gravyvalet /bin/bash`.
 3. Migrate the existing models: `python manage.py migrate`.
 4. Visit [http://0.0.0.0:8004/](http://0.0.0.0:8004/).
 
