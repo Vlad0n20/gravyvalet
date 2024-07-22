@@ -70,8 +70,6 @@ class AddonOperationInvocation(AddonsServiceBaseModel):
 
     def clean_fields(self, *args, **kwargs):
         super().clean_fields(*args, **kwargs)
-        # import ipdb
-        # ipdb.set_trace()
         try:
             jsonschema.validate(
                 instance=self.operation_kwargs,
@@ -85,11 +83,6 @@ class AddonOperationInvocation(AddonsServiceBaseModel):
             raise ValidationError(
                 {"thru_addon": "thru_addon and thru_account must agree"}
             )
-
-    def save(self, *args, **kwargs):
-        # import ipdb
-        # ipdb.set_trace()
-        super().save(*args, **kwargs)
 
     def storage_imp_config(self) -> StorageConfig:
         if self.thru_addon:
