@@ -29,7 +29,7 @@ async def get_storage_addon_instance(
     else:
         imp = imp_cls(config=config)
     if isinstance(imp, ClientRequestorImp):
-        imp.construct_client(account)
+        await imp.construct_client(account)
 
     return imp
 

@@ -1,8 +1,8 @@
 # import dataclasses
 # import functools
 # import typing
-
 import boto3
+from asgiref.sync import sync_to_async
 from botocore import exceptions
 from django.core.exceptions import ValidationError
 
@@ -37,6 +37,7 @@ class S3StorageImp(storage.StorageAddonImp, S3ClientImp):
         except exceptions.ClientError:
             raise ValidationError("Fail to validate access key and secret key")
 
+    @sync_to_async
     def construct_client(self, account):
         access_key = account._credentials.decrypted_credentials.access_key
         secret_key = account._credentials.decrypted_credentials.secret_key
@@ -48,7 +49,11 @@ class S3StorageImp(storage.StorageAddonImp, S3ClientImp):
         return
 
     async def list_root_items(self, page_cursor: str = "") -> storage.ItemSampleResult:
-        return
+        results = list(self.list_buckets())
+        return storage.ItemSampleResult(
+            items=results,
+            total_count=len(results),
+        )
 
     async def list_child_items(
         self,
@@ -57,3 +62,11 @@ class S3StorageImp(storage.StorageAddonImp, S3ClientImp):
         item_type: storage.ItemType | None = None,
     ) -> storage.ItemSampleResult:
         return
+
+    def list_buckets(self):
+        for bucket in self.client.list_buckets()["Buckets"]:
+            yield storage.ItemResult(
+                item_id=bucket["Name"],
+                item_name=bucket["Name"],
+                item_type=storage.ItemType.FOLDER,
+            )
