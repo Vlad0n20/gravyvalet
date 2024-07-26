@@ -46,7 +46,25 @@ class S3StorageImp(storage.StorageAddonImp, S3ClientImp):
         )
 
     async def get_item_info(self, item_id: str) -> storage.ItemResult:
-        return
+        bucket = item_id.split("/", 1)[0]
+        key = item_id.split("/", 1)[1]
+        response = self.client.list_objects(Bucket=bucket, Prefix=key, Delimiter="/")
+        if response["Contents"]:
+            if len(response["Contents"]) == 1 and ("CommonPrefixes" not in response):
+                # that means this is a file, not a folder
+                return storage.ItemResult(
+                    item_id=response["Contents"][0]["Key"],
+                    item_name=response["Contents"][0]["Key"],
+                    item_type=storage.ItemType.FILE,
+                )
+            else:
+                # That means this is a folder
+                return storage.ItemResult(
+                    item_id=item_id,
+                    item_name=item_id,
+                    item_type=storage.ItemType.FOLDER,
+                )
+        return None
 
     async def list_root_items(self, page_cursor: str = "") -> storage.ItemSampleResult:
         results = list(self.list_buckets())
@@ -61,6 +79,28 @@ class S3StorageImp(storage.StorageAddonImp, S3ClientImp):
         page_cursor: str = "",
         item_type: storage.ItemType | None = None,
     ) -> storage.ItemSampleResult:
+        bucket = item_id.split("/", 1)[0]
+        key = item_id.split("/", 1)[1]
+        response = self.client.list_objects(Bucket=bucket, Prefix=key, Delimiter="/")
+        results = []
+        if response["CommonPrefixes"]:
+            for folder in response["CommonsPrefixes"]:
+                results.append(
+                    storage.ItemResult(
+                        item_id=folder["Prefix"],
+                        item_name=folder["Prefix"],
+                        item_type=storage.ItemType.FOLDER,
+                    )
+                )
+        if response["Contents"]:
+            for file in response["Contents"]:
+                results.append(
+                    storage.ItemResult(
+                        item_id=file["Key"],
+                        item_name=bucket["Key"],
+                        item_type=storage.ItemType.FILE,
+                    )
+                )
         return
 
     def list_buckets(self):
