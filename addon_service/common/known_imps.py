@@ -16,6 +16,7 @@ from addon_imps.storage import (
     github,
     google_drive,
     onedrive,
+    dropbox,
     s3,
 )
 from addon_service.common.enum_decorators import enum_names_same_as
@@ -24,6 +25,7 @@ from addon_toolkit import AddonImp
 
 if __debug__:
     from addon_imps.storage import my_blarg
+
 
 __all__ = (
     "AddonImpNumbers",
@@ -74,6 +76,7 @@ class KnownAddonImps(enum.Enum):
     DATAVERSE = dataverse.DataverseStorageImp
 
     GIT_HUB = github.GitHubStorageImp
+    DROPBOX = dropbox.DropboxStorageImp
 
     if __debug__:
         BLARG = my_blarg.MyBlargStorage
@@ -92,6 +95,7 @@ class AddonImpNumbers(enum.Enum):
     FIGSHARE = 1007
     ONEDRIVE = 1008
     DATAVERSE = 1010
+    GOOGLE_DRIVE = 1004
 
     DROPBOX = 1006
 
