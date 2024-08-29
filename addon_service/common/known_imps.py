@@ -8,6 +8,7 @@ import enum
 from addon_imps.citations import zotero_org
 from addon_imps.storage import (
     box_dot_com,
+    google_drive,
     dropbox,
     s3,
 )
@@ -17,6 +18,7 @@ from addon_toolkit import AddonImp
 
 if __debug__:
     from addon_imps.storage import my_blarg
+
 
 __all__ = (
     "AddonImpNumbers",
@@ -60,6 +62,7 @@ class KnownAddonImps(enum.Enum):
     BOX_DOT_COM = box_dot_com.BoxDotComStorageImp
     S3 = s3.S3StorageImp
     ZOTERO_ORG = zotero_org.ZoteroOrgCitationImp
+    GOOGLE_DRIVE = google_drive.GoogleDriveStorageImp
     DROPBOX = dropbox.DropboxStorageImp
 
     if __debug__:
@@ -74,6 +77,7 @@ class AddonImpNumbers(enum.Enum):
     BOX_DOT_COM = 1001
     ZOTERO_ORG = 1002
     S3 = 1003
+    GOOGLE_DRIVE = 1004
 
     DROPBOX = 1006
 
