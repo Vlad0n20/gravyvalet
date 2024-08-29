@@ -183,7 +183,7 @@ class AuthorizedAccount(AddonsServiceBaseModel):
         if client_config and self._temporary_oauth1_credentials:
             return oauth1_utils.build_auth_url(
                 auth_uri=client_config.auth_url,
-                temporary_oauth_token=self._temporary_oauth1_credentials.oauth_token,
+                temporary_oauth_token=self._temporary_oauth1_credentials.decrypted_credentials.oauth_token,
             )
         return None
 
@@ -207,7 +207,7 @@ class AuthorizedAccount(AddonsServiceBaseModel):
     @api_base_url.setter
     def api_base_url(self, value: str):
         self._api_base_url = (
-            "" if value == self.external_service.api_base_url else value
+            "" if (value == self.external_service.api_base_url or not value) else value
         )
 
     @property

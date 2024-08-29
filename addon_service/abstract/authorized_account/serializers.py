@@ -44,7 +44,9 @@ class AuthorizedAccountSerializer(serializers.HyperlinkedModelSerializer):
         read_only=True,
     )
     auth_url = serializers.CharField(read_only=True)
-    api_base_url = serializers.URLField(allow_blank=True, required=False)
+    api_base_url = serializers.URLField(
+        allow_blank=True, required=False, allow_null=True
+    )
 
     credentials = CredentialsField(write_only=True, required=False)
     initiate_oauth = serializers.BooleanField(write_only=True, required=False)
