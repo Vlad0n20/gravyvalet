@@ -34,8 +34,8 @@ class ZoteroOrgCitationImp(CitationAddonImp):
             items = [
                 ItemResult(
                     item_id=col["key"],
-                    item_name=col["name"],
-                    item_type=ItemType.COLLECTION,  # не впевнена що ж папками
+                    item_name=col["data"].get("name", "Unnamed Collection"),
+                    item_type=ItemType.COLLECTION,
                 )
                 for col in collections
             ]
@@ -45,24 +45,18 @@ class ZoteroOrgCitationImp(CitationAddonImp):
         self,
         collection_id: str,
         filter_items: ItemType | None = None,
-        page_cursor: str = "",
     ) -> ItemSampleResult:
         async with self.network.GET(
             f"users/{self.config.external_account_id}/collections/{collection_id}/items",
-            query=self._params_from_cursor(page_cursor),
         ) as response:
             items_json = await response.json_content()
             items = [
                 ItemResult(
                     item_id=item["key"],
-                    item_name=item["title"],
+                    item_name=item["data"].get("title", "Unnamed title"),
                     item_type=ItemType.COLLECTION,
                 )
                 for item in items_json
                 if filter_items is None
-                or self._determine_item_type(item) == filter_items
             ]
-            cursor = self._parse_cursor(response.headers)
-            return ItemSampleResult(items=items, total_count=len(items)).with_cursor(
-                cursor
-            )
+            return ItemSampleResult(items=items, total_count=len(items))

@@ -38,7 +38,7 @@ class ItemType(Enum):
 
 @dataclasses.dataclass(slots=True)
 class ItemResult:
-    item_id: int
+    item_id: str
     item_name: str
     item_type: ItemType
     item_path: list[str] | None = None

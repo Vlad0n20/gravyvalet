@@ -82,7 +82,7 @@ class AuthorizedAccountSerializer(serializers.HyperlinkedModelSerializer):
             elif authorized_account.credentials_format is CredentialsFormats.OAUTH1A:
                 authorized_account.initiate_oauth1_flow()
                 self.context["request"].session["oauth1a_account_id"] = encrypt_string(
-                    authorized_account.pk
+                    f"{authorized_account.__class__.__name__}/{authorized_account.pk}"
                 )
             else:
                 raise serializers.ValidationError(
