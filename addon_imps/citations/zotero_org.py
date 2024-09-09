@@ -54,7 +54,7 @@ class ZoteroOrgCitationImp(CitationAddonImp):
                 ItemResult(
                     item_id=item["key"],
                     item_name=item["data"].get("title", "Unnamed title"),
-                    item_type=ItemType.COLLECTION,
+                    item_type=ItemType.DOCUMENT,
                 )
                 for item in items_json
                 if filter_items is None
