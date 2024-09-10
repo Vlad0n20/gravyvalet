@@ -13,7 +13,7 @@ import addon_service.common.validators
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("addon_service", "0001_initial"),
+        ("addon_service", "0002_externalstorageservice_int_supported_features"),
     ]
 
     operations = [
