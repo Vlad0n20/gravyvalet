@@ -21,9 +21,30 @@ class ZoteroOrgCitationImp(CitationAddonImp):
                 if not user_id:
                     raise KeyError("Failed to fetch user ID from Zotero.")
                 return str(user_id)
+            elif response.status == 400:
+                error_message = await response.json_content().get(
+                    "message", "Bad request."
+                )
+                raise ValueError(f"Zotero API returned 400: {error_message}")
+
+            elif response.status == 403:
+                error_message = await response.json_content().get(
+                    "message", "Access forbidden."
+                )
+                raise PermissionError(f"Zotero API returned 403: {error_message}")
+
+            elif response.status == 404:
+                error_message = await response.json_content().get(
+                    "message", "Resource not found."
+                )
+                raise LookupError(f"Zotero API returned 404: {error_message}")
+
             else:
+                error_message = await response.json_content().get(
+                    "message", "Unknown error occurred."
+                )
                 raise ValueError(
-                    f"Failed to fetch key information. Status code: {response.status}"
+                    f"Failed to fetch key information. Status code: {response.status}, {error_message}"
                 )
 
     async def list_root_collections(self) -> ItemSampleResult:
@@ -33,11 +54,11 @@ class ZoteroOrgCitationImp(CitationAddonImp):
             collections = await response.json_content()
             items = [
                 ItemResult(
-                    item_id=col["key"],
-                    item_name=col["data"].get("name", "Unnamed Collection"),
+                    item_id=collection["key"],
+                    item_name=collection["data"].get("name", "Unnamed Collection"),
                     item_type=ItemType.COLLECTION,
                 )
-                for col in collections
+                for collection in collections
             ]
             return ItemSampleResult(items=items, total_count=len(items))
 
