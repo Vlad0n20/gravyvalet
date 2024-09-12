@@ -92,6 +92,8 @@ class GravyvaletHttpRequestor(HttpRequestor):
             request.http_method,
             _url,
             headers=await _private.get_headers(),
+            params=request.query,
+            json=request.json,
             # TODO: content
         ) as _response:
             if (
