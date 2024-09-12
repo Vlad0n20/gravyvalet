@@ -93,6 +93,8 @@ class AddonImpNumbers(enum.Enum):
     ONEDRIVE = 1008
     DATAVERSE = 1010
 
+    DROPBOX = 1006
+
     GIT_HUB = 1013
     if __debug__:
         BLARG = -7
