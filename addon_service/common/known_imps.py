@@ -95,7 +95,6 @@ class AddonImpNumbers(enum.Enum):
     FIGSHARE = 1007
     ONEDRIVE = 1008
     DATAVERSE = 1010
-    GOOGLE_DRIVE = 1004
 
     DROPBOX = 1006
 
