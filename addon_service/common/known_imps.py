@@ -77,7 +77,7 @@ class AddonImpNumbers(enum.Enum):
     BOX_DOT_COM = 1001
     ZOTERO_ORG = 1002
     S3 = 1003
-    GOOGLE_DRIVE = 1004
+    GOOGLE_DRIVE = 1005
 
     DROPBOX = 1006
 
