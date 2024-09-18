@@ -5,12 +5,15 @@ import and add new implementations here to make them available in the api
 
 import enum
 
-from addon_imps.citations import zotero_org
+from addon_imps.citations import (
+    mendeley,
+    zotero_org,
+)
 from addon_imps.storage import (
     box_dot_com,
+    dropbox,
     figshare,
     google_drive,
-    dropbox,
     s3,
 )
 from addon_service.common.enum_decorators import enum_names_same_as
@@ -19,7 +22,6 @@ from addon_toolkit import AddonImp
 
 if __debug__:
     from addon_imps.storage import my_blarg
-
 
 __all__ = (
     "AddonImpNumbers",
@@ -66,6 +68,7 @@ class KnownAddonImps(enum.Enum):
     GOOGLE_DRIVE = google_drive.GoogleDriveStorageImp
     FIGSHARE = figshare.FigshareStorageImp
     DROPBOX = dropbox.DropboxStorageImp
+    MENDELEY = mendeley.MendeleyCitationImp
 
     if __debug__:
         BLARG = my_blarg.MyBlargStorage
@@ -79,6 +82,7 @@ class AddonImpNumbers(enum.Enum):
     BOX_DOT_COM = 1001
     ZOTERO_ORG = 1002
     S3 = 1003
+    MENDELEY = 1004
     GOOGLE_DRIVE = 1005
     DROPBOX = 1006
     FIGSHARE = 1007
