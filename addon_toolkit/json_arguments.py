@@ -24,7 +24,6 @@ __all__ = (
     "typed_value_from_json",
 )
 
-
 ###
 # building jsonschema
 
