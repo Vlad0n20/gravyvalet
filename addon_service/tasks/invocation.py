@@ -23,7 +23,7 @@ def perform_invocation__blocking(invocation: AddonOperationInvocation) -> None:
     # implemented as a sync function for django transactions
     with dibs(invocation):  # TODO: handle dibs errors
         try:
-            if isinstance(invocation.imp_cls, CitationAddonImp):
+            if issubclass(invocation.imp_cls, CitationAddonImp):
                 _imp = get_citation_addon_instance__blocking(
                     invocation.imp_cls,  # type: ignore[arg-type]  #(TODO: generic impstantiation)
                     invocation.thru_account,
