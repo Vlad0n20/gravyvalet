@@ -75,6 +75,8 @@ class KnownAddonImps(enum.Enum):
 
     GIT_HUB = github.GitHubStorageImp
 
+    GIT_HUB = github.GitHubStorageImp
+
     if __debug__:
         BLARG = my_blarg.MyBlargStorage
 
