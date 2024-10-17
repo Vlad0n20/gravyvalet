@@ -16,30 +16,27 @@ class GitHubStorageImp(storage.StorageAddonHttpRequestorImp):
     async def get_external_account_id(self, auth_result_extras: dict[str, str]) -> str:
         async with self.network.GET("user") as response:
             json = await response.json_content()
-            print(f"get_external_account_id {json=}")
             return str(json["id"])
 
     async def list_root_items(self, page_cursor: str = "") -> storage.ItemSampleResult:
-        # return await self.list_child_items(item_id="owner/repo:", page_cursor=page_cursor)
-        # return await self.list_child_items(item_id="", page_cursor=page_cursor)
         async with self.network.GET(
             "user/repos",
         ) as response:
             if response.http_status == 200:
                 json = await response.json_content()
-                with open("github.json", "w") as f:
-                    print(json, file=f)
                 items = [self._parse_github_repo(repo) for repo in json]
-                with open("repos.json", "w") as f:
-                    print(items, file=f)
                 return storage.ItemSampleResult(
                     items=items, total_count=len(items)
                 ).with_cursor(self._create_offset_cursor(len(items), page_cursor))
 
     async def get_item_info(self, item_id: str) -> storage.ItemResult:
-        print(f"get_item_info {item_id=}")
+        if item_id == "." or not item_id:
+            return storage.ItemResult(
+                item_id="",
+                item_name="GitHub",
+                item_type=ItemType.FOLDER,
+            )
         owner, repo, path = self._parse_github_item_id(item_id)
-        print(f"get_item_info {owner=}, {repo=}, {path=}")
         if path == "":
             url = f"repos/{owner}/{repo}"
         else:
@@ -47,14 +44,8 @@ class GitHubStorageImp(storage.StorageAddonHttpRequestorImp):
         async with self.network.GET(url) as response:
             if response.http_status == 200:
                 json = await response.json_content()
-                with open("github_item_info.json", "w") as f:
-                    print(json, file=f)
-                print("##########", type(json))
                 if path != "":
-                    if isinstance(json, dict):
-                        return self._parse_github_item(json, full_name=item_id)
-                    else:
-                        return self._parse_github_item(json[0], full_name=item_id)
+                    return self._parse_github_item(json, full_name=item_id)
                 else:
                     return self._parse_github_repo(json)
             elif response.http_status == 404:
@@ -68,9 +59,7 @@ class GitHubStorageImp(storage.StorageAddonHttpRequestorImp):
         page_cursor: str = "",
         item_type: storage.ItemType | None = None,
     ) -> storage.ItemSampleResult:
-        print(f"list_child_items {item_id=}")
         owner, repo, path = self._parse_github_item_id(item_id)
-        print(f"list_child_items {owner=}, {repo=}, {path=}")
         query_params = self._params_from_cursor(page_cursor)
         async with self.network.GET(
             f"repos/{owner}/{repo}/contents/{path}",
@@ -81,13 +70,10 @@ class GitHubStorageImp(storage.StorageAddonHttpRequestorImp):
                 items = [
                     self._parse_github_item(entry, full_name=item_id) for entry in json
                 ]
-                with open("repo_items.json", "w") as f:
-                    print(json, file=f)
                 return storage.ItemSampleResult(
                     items=items, total_count=len(items)
                 ).with_cursor(self._create_offset_cursor(len(items), page_cursor))
             elif response.http_status == 404:
-                print("##########  list_child_items 404", await response.json_content())
                 raise ItemNotFound
             else:
                 raise UnexpectedAddonError
@@ -124,10 +110,6 @@ class GitHubStorageImp(storage.StorageAddonHttpRequestorImp):
         )
 
     def _parse_github_item(self, item_json: dict, full_name: str) -> storage.ItemResult:
-        with open("github_item.json", "a") as f:
-            print(item_json, file=f)
-        print("##########  _parse_github_item type(item_json)", type(item_json))
-        print(f"{item_json.get('type')=}")
         item_type = (
             ItemType.FILE if item_json.get("type") == "file" else ItemType.FOLDER
         )
