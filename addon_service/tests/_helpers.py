@@ -244,6 +244,7 @@ class MockOAuth1ServiceProvider:
 class _FakeAiohttpResponse:
     status: HTTPStatus = HTTPStatus.OK
     data: dict | None = None
+    content_type = "application/json"
 
     async def json(self):
         return self.data

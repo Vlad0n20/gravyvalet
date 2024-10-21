@@ -118,10 +118,9 @@ async def _token_request(
 
     _client = await get_singleton_client_session()
     async with _client.post(token_endpoint_url, data=request_body) as _token_response:
-        response_text = await _token_response.text()
-        if "github.com" in token_endpoint_url:
+        if _token_response.content_type == "application/x-www-form-urlencoded":
+            response_text = await _token_response.text()
             response_data = dict(urllib.parse.parse_qsl(response_text))
-            response_data["expires_in"] = int(response_data["expires_in"])
             return FreshTokenResult.from_token_response_json(response_data)
         if not HTTPStatus(_token_response.status).is_success:
             raise RuntimeError(await _token_response.json())
