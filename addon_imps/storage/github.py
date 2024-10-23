@@ -7,6 +7,12 @@ from addon_toolkit.interfaces import storage
 from addon_toolkit.interfaces.storage import ItemType
 
 
+ITEM_TYPE_MAP = {
+    ItemType.FILE: "file",
+    ItemType.FOLDER: "dir",
+}
+
+
 class GitHubStorageImp(storage.StorageAddonHttpRequestorImp):
     """storage on GitHub
 
@@ -67,9 +73,13 @@ class GitHubStorageImp(storage.StorageAddonHttpRequestorImp):
         ) as response:
             if response.http_status == 200:
                 json = await response.json_content()
-                items = [
-                    self._parse_github_item(entry, full_name=item_id) for entry in json
-                ]
+                git_hub_item_type = ITEM_TYPE_MAP[item_type] if item_type else None
+                items = []
+                for entry in json:
+                    if git_hub_item_type and entry["type"] != git_hub_item_type:
+                        continue
+                    items.append(self._parse_github_item(entry, full_name=item_id))
+
                 return storage.ItemSampleResult(
                     items=items, total_count=len(items)
                 ).with_cursor(self._create_offset_cursor(len(items), page_cursor))
