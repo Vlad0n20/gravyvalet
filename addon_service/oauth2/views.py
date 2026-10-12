@@ -23,7 +23,13 @@ async def oauth2_callback_view(request):
     see https://www.rfc-editor.org/rfc/rfc6749.html#section-4.1.2
     """
 
-    # TODO: handle error: https://www.rfc-editor.org/rfc/rfc6749.html#section-4.1.2.1
+    # https://www.rfc-editor.org/rfc/rfc6749.html#section-4.1.2.1
+    if "error" in request.GET:
+        return HttpResponse(
+            f"oauth2 authorization failed: {request.GET['error']}"
+            f" ({request.GET.get('error_description', 'no description')})",
+            status=HTTPStatus.BAD_REQUEST,
+        )
     _state_token = request.GET["state"]
     _authorization_code = request.GET["code"]
     _token_metadata, _oauth_client_config = await _resolve_state_token(_state_token)
